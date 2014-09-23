@@ -1,0 +1,50 @@
+<h1><%=@track[:title]%></h1>
+
+<a href="/tracks"> Back </a>
+
+
+<% embed = @track[:url].split('?v=')[1] %>
+<p>
+  <iframe width="180" height="120" src="//www.youtube.com/embed/<%=embed%>" frameborder="0" allowfullscreen></iframe>      
+</p>
+
+
+<!-- Post a review form -->
+<!-- Must be logged in to see this -->
+<% if session[:user_id] == nil%>
+	<small> You must be logged in to review </small>
+<% else %>
+
+	<% if Review.exists?(track_id: @track[:id], user_id: session[:user_id]) %>
+			<h6> You already reviewed </h6>
+	<% else %>
+
+			<form method="post" action="/review/<%=@track.id%>">
+
+			  <div>
+			    <label>Review:</label>
+			    <input type="text" name="review">
+			  
+			    <input type="submit" value="Submit" >
+			  </div>
+			</form>
+	<% end %>
+<% end %>
+
+<!-- Display reviews -->
+
+<% @reviews.reverse.each do |review| %>
+  <% user = User.find(review.user_id) %>
+  <div class="review">
+    <h4><%= review.content %></h4>
+    <small>Submitted by: <%= user[:username] %> </small>
+    <%=review[:id]%>
+    <% if user[:id] == session[:user_id] %>
+    		<form method="post" action="/review/<%=review[:id]%>/delete">
+    			<input type="submit" value="X">
+    		</form>
+
+    <% end %>
+    <p>_____________________</p>
+  </div>
+<% end %>

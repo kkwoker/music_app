@@ -1,7 +1,7 @@
 
 <% if session[:user_id] %>
   <h1>Welcome, <%=User.find(session[:user_id])[:username] %></h1>
-
+<a href="/logout">Logout</a>
 <% else %>
   <h1>Log in here!</h1>
   <% if @error %>

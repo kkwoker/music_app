@@ -1,5 +1,7 @@
 <h1>Post your music!</h1>
-<p>Welcome, <%=User.find(session[:user_id])[:username] %></p>
+<% if session[:user_id] %>
+    <p>Welcome, <%=User.find(session[:user_id])[:username] %></p>
+<% end %>
 <!-- Display form errors -->
 <% if @track && @track.errors.any? %>
   <div>
@@ -45,8 +47,24 @@
 <% @tracks.reverse.each do |track| %>
   <% embed = track[:url].split('?v=')[1] %>
   <div class="track">
-    <h3><%= track.title %></h3><p> <small>(by: <%= track.author %>)</small></p></h3>
-    <small><a href="/upvote/<%= track.id %>">upvote:</a> <%=track.upvotes.count%></small>
+    <h3><a href="review/<%=track.id%>"><%= track.title %></a></h3>
+    <p> <small>(by: <%= track.author %>)</small></p></h3>
+
+    <small>
+
+    <% if session[:user_id] %>
+      <% if !Upvote.exists?(user_id: session[:user_id], track_id: track.id) %>
+        <form method="post" action="/upvote/<%= track.id %>" visible="hidden"><input type="submit" value="upvote:"></form>
+      <% else %>
+        Upvotes: 
+      <% end %>
+    <% else %>
+      Upvotes: 
+    <% end %>
+     <%=track.upvotes.count%>
+
+    </small>
+    
     <p>
       <iframe width="180" height="120" src="//www.youtube.com/embed/<%=embed%>" frameborder="0" allowfullscreen></iframe>      
     </p>

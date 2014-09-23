@@ -65,15 +65,34 @@ get '/logout' do
 	erb :'login/index'
 end
 
-get '/upvote/:id' do
+post '/upvote/:id' do
 	
 	Upvote.new(user_id: session[:user_id], track_id: params[:id]).save
 	@tracks = Track.all
-	erb :'tracks/index'
+	redirect 'tracks'
 end
 
 get '/profile/:id' do
 	@user = User.find(params[:id])
 	erb :'profile/index'
 
+end
+
+get '/review/:id' do
+	@reviews = Review.where(track_id: params[:id])
+	@track = Track.find(params[:id])
+	erb :'review/index'
+end
+
+post '/review/:id' do
+	Review.new(track_id: params[:id] ,user_id: session[:user_id], content: params[:review]).save
+	
+	redirect "review/" + params[:id]
+
+end
+
+post '/review/:id/delete' do
+	review = Review.find(params[:id])
+	review.destroy
+	redirect "review/" + review.track_id.to_s
 end
