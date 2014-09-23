@@ -1,0 +1,20 @@
+
+<p>Music posted by <%=@user[:username]%></p>
+<p><a href="/tracks">back</a></p>
+
+<% tracks = Track.where(user_id: @user[:id]) %>
+<% tracks.reverse.each do |track| %>
+	<% embed = track[:url].split('?v=')[1] %>
+	<div class="track">
+    <h3><%= track.title %></h3><p> <small>(by: <%= track.author %>)</small></p></h3>
+    <small><a href="/upvote/<%= track.id %>">upvote:</a> <%=track.upvotes.count%></small>
+    <p>
+      <iframe width="180" height="120" src="//www.youtube.com/embed/<%=embed%>" frameborder="0" allowfullscreen></iframe>      
+    </p>
+    <p>
+      <small>Submitted by: <a href="/profile/<%=track[:user_id]%>"><%= User.find(track.user_id)[:username] %></a></small>
+    </p>
+
+    <p>_____________________</p>
+  </div>
+<% end %>

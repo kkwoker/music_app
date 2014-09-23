@@ -1,21 +1,35 @@
 <h1>Post your music!</h1>
+<p>Welcome, <%=User.find(session[:user_id])[:username] %></p>
+<!-- Display form errors -->
+<% if @track && @track.errors.any? %>
+  <div>
+    <strong>Some issues with your submission, please fix them:</strong>
+    <ul>
+      <% @track.errors.full_messages.each do |track| %>
+        <li><%= track %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
 
+<a href='/logout'>Logout</a>
 
+<!-- Post a track form -->
 <form method="post" action="/tracks">
 
   <div>
     <label>Title:</label>
-    <input type="text" name="title">
+    <input type="text" name="title" value="<%=@track && @track.title %>">
   </div>
 
   <div>
-    <label>Author:</label>
-    <input type="text" name="author" >
+    <label>Artist:</label>
+    <input type="text" name="author" value="<%=@track && @track.author %>" >
   </div>
 
   <div>
-    <label>URL:</label>
-    <input type="text" name="url" >
+    <label>YouTube link:</label>
+    <input type="text" name="url" value="<%=@track && @track.url %>">
   </div>
 
   <div>
@@ -26,12 +40,21 @@
 
 
 
+<!-- Display tracks -->
 
-<% @tracks.each do |track| %>
+<% @tracks.reverse.each do |track| %>
+  <% embed = track[:url].split('?v=')[1] %>
   <div class="track">
-    <h3><a href="/track/<%= track.id %>"><%= track.title %></a> <small>(by: <%= track.author %>)</small></h3>
+    <h3><%= track.title %></h3><p> <small>(by: <%= track.author %>)</small></p></h3>
+    <small><a href="/upvote/<%= track.id %>">upvote:</a> <%=track.upvotes.count%></small>
     <p>
-      <%= track.url %>
+      <iframe width="180" height="120" src="//www.youtube.com/embed/<%=embed%>" frameborder="0" allowfullscreen></iframe>      
     </p>
+    <p>
+      <small>Submitted by: <a href="/profile/<%=track[:user_id]%>"><%= User.find(track.user_id)[:username] %></a></small>
+    </p>
+
+    <p>_____________________</p>
   </div>
 <% end %>
+
