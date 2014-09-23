@@ -1,7 +1,9 @@
-Sinatra
-=============
+Soundwall
+
+A Sinatra app
 
 Brought to you by Lighthouse Labs
+
 
 ## Getting Started
 
